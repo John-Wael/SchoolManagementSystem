@@ -9,3 +9,7 @@ obj/
 .idea/
 .DS_Store
 .vs/
+cookies.txt
+*.bak
+SQLQuery*.sql
+*.local.json
