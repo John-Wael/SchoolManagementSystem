@@ -1,0 +1,129 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<style>
+    .details-header {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
+    }
+
+    .details-header h2 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .details-header p {
+        margin: 5px 0 0 0;
+        opacity: 0.9;
+    }
+
+    .student-table-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .student-table {
+        margin: 0;
+    }
+
+    .student-table thead {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        color: white;
+    }
+
+    .student-table thead th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .student-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .student-table tbody tr:hover {
+        background: #f0fff7;
+    }
+
+    .student-table tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        border-color: #f0f0f0;
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(79, 172, 254, 0.4);
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(79, 172, 254, 0.6);
+        color: white;
+    }
+</style>
+
+<div class="details-header">
+    <h2>📋 @ViewBag.CourseCode - @ViewBag.CourseTitle</h2>
+    <p>🏛️ Department: @ViewBag.Department</p>
+    <p>👥 Enrolled: @ViewBag.EnrolledCount @(ViewBag.MaxStudents != null ? $"/ {ViewBag.MaxStudents}" : "")</p>
+</div>
+
+<h3 class="mb-3">👥 Enrolled Students</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No students enrolled in this course yet.</div>
+}
+else
+{
+    <div class="student-table-container">
+        <table class="table student-table">
+            <thead>
+                <tr>
+                    <th>Student Number</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Semester</th>
+                    <th>Academic Year</th>
+                    <th>Enrolled On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td><strong>@s.StudentNumber</strong></td>
+                        <td>@s.FullName</td>
+                        <td>@s.Email</td>
+                        <td><span class="badge bg-primary">@s.Semester</span></td>
+                        <td>@s.AcademicYear</td>
+                        <td>@s.EnrolledOn.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<a asp-controller="Dashboard" asp-action="Teacher" class="back-btn">⬅️ Back to Dashboard</a>

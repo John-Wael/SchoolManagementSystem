@@ -1,0 +1,35 @@
+@model SchoolManagementSystem.Models.Student
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StudentNumber)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.StudentNumber)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FirstName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.FirstName)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LastName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.LastName)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DateOfBirth)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.DateOfBirth)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.IsActive)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.IsActive)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Department)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Department.Name)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-studentid="@Model.StudentId" class="btn btn-outline-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

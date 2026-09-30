@@ -1,0 +1,200 @@
+@model IEnumerable<SchoolManagementSystem.Models.Lesson>
+
+@{
+    ViewData["Title"] = "Lessons";
+    bool canManage = ViewBag.CanManage ?? false;
+    int courseId = ViewBag.CourseId ?? 0;
+}
+
+<style>
+    .lessons-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .lessons-header h2 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .upload-btn {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .upload-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        color: #764ba2;
+    }
+
+    .lesson-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+
+    .lesson-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .lesson-card .card-body {
+        padding: 20px;
+    }
+
+    .lesson-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .lesson-course {
+        display: inline-block;
+        background: #e7f3ff;
+        color: #0066cc;
+        padding: 3px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .lesson-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 15px;
+        min-height: 40px;
+    }
+
+    .lesson-date {
+        color: #999;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+
+    .video-container {
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        background: #000;
+    }
+
+    .video-container video,
+    .video-container iframe {
+        width: 100%;
+        display: block;
+        border: none;
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+        border: none;
+        padding: 6px 20px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(245, 87, 108, 0.4);
+        color: white;
+    }
+
+    .empty-lessons {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #f8f9ff, #e7f3ff);
+        border-radius: 15px;
+        border: 2px dashed #b8c9e8;
+    }
+
+    .empty-lessons .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="lessons-header">
+    <h2>📹 Lessons for @ViewBag.CourseTitle</h2>
+    @if (canManage)
+    {
+        <a asp-action="Create" asp-route-courseId="@courseId" class="upload-btn">
+            ➕ Upload New Lesson
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-lessons">
+        <div class="icon">📭</div>
+        <h4>No lessons uploaded yet</h4>
+        <p class="text-muted">Lessons will appear here once they're uploaded</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var lesson in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card lesson-card">
+                    <div class="card-body">
+                        <h5 class="lesson-title">@lesson.Title</h5>
+                        @if (lesson.Course != null)
+                        {
+                            <span class="lesson-course">@lesson.Course.CourseCode - @lesson.Course.Title</span>
+                        }
+                        <p class="lesson-description">@lesson.Description</p>
+                        <p class="lesson-date">📅 Uploaded: @lesson.UploadDate.ToString("yyyy-MM-dd")</p>
+
+                        <div class="video-container">
+                            @if (lesson.VideoType == "YouTube" && !string.IsNullOrEmpty(lesson.YouTubeUrl))
+                            {
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="@lesson.YouTubeUrl" allowfullscreen></iframe>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(lesson.VideoPath))
+                            {
+                                <video controls>
+                                    <source src="@lesson.VideoPath" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            }
+                        </div>
+
+                        @if (canManage)
+                        {
+                            <form asp-action="Delete" asp-route-id="@lesson.LessonId" method="post" onsubmit="return confirm('Delete this lesson?');">
+                                <button type="submit" class="delete-btn">🗑️ Delete</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

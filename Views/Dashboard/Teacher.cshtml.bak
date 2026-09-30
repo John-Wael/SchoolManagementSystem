@@ -1,0 +1,54 @@
+﻿@model SchoolManagementSystem.Models.ViewModels.TeacherDashboardViewModel
+
+@{
+    ViewData["Title"] = "Teacher Dashboard";
+}
+
+<h1>Teacher Dashboard</h1>
+<hr />
+
+@if (!Model.IsLinked)
+{
+    <div class="alert alert-warning">
+        Your account isn't linked to a Teacher record yet. Contact an Admin to link your login
+        to your Teacher profile so your courses can show up here.
+    </div>
+}
+else
+{
+    <h4>Welcome, @Model.TeacherName</h4>
+
+    @if (!Model.Courses.Any())
+    {
+        <div class="alert alert-info mt-3">You aren't assigned to any courses yet.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover align-middle mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th>Course Code</th>
+                    <th>Title</th>
+                    <th>Role</th>
+                    <th>Enrolled</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Courses)
+                {
+                    <tr>
+                        <td>@c.CourseCode</td>
+                        <td>@c.Title</td>
+                        <td>@(c.IsPrimary ? "Primary" : "Assistant")</td>
+                        <td>@c.EnrolledCount@(c.MaxStudents.HasValue ? $" / {c.MaxStudents}" : "")</td>
+                        <td class="text-end">
+                            <a asp-controller="Grades" asp-action="Index" class="btn btn-sm btn-outline-primary">Grades</a>
+                            <a asp-controller="Attendance" asp-action="Index" class="btn btn-sm btn-outline-secondary">Attendance</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

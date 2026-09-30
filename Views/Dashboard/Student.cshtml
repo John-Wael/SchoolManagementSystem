@@ -1,0 +1,268 @@
+@model SchoolManagementSystem.Models.ViewModels.StudentDashboardViewModel
+
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<style>
+    .student-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .student-header::before {
+        content: "🎓";
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 120px;
+        opacity: 0.15;
+    }
+
+    .student-header h1 { margin: 0; font-size: 32px; font-weight: 700; }
+    .student-header p { margin: 8px 0 0 0; opacity: 0.9; font-size: 16px; }
+
+    .stat-card {
+        border: none;
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .stat-card .icon { font-size: 40px; opacity: 0.7; position: absolute; right: 15px; top: 15px; }
+    .stat-card .value { font-size: 36px; font-weight: bold; margin: 0; line-height: 1.2; }
+    .stat-card .label { font-size: 13px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; margin: 5px 0 0 0; }
+
+    .card-courses { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .card-attendance { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .card-grade { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+    .course-table-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .course-table { margin: 0; }
+
+    .course-table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .course-table thead th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .course-table tbody tr { transition: background 0.2s ease; }
+    .course-table tbody tr:hover { background: #f8f9ff; }
+    .course-table tbody td { padding: 15px; vertical-align: middle; }
+
+    .action-btn {
+        border-radius: 25px;
+        padding: 6px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border-width: 2px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border: 2px dashed #dee2e6;
+    }
+
+    .empty-state .icon { font-size: 60px; margin-bottom: 15px; }
+
+    .badge-present { background: #28a745; }
+    .badge-absent { background: #dc3545; }
+</style>
+
+<div class="student-header">
+    <h1>Welcome back, @Model.StudentName! 👋</h1>
+    <p>🎓 Student Number: @Model.StudentNumber</p>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        ⚠️ @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (!Model.IsLinked)
+{
+    <div class="alert alert-warning">
+        ⚠️ Your account isn't linked to a Student record yet.
+    </div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card card-courses">
+                <span class="icon">📚</span>
+                <p class="value">@Model.Enrollments.Count</p>
+                <p class="label">Enrolled Courses</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card card-attendance">
+                <span class="icon">📅</span>
+                <p class="value">@Model.Enrollments.Sum(e => e.TotalAttendanceRecords)</p>
+                <p class="label">Attendance Records</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card card-grade">
+                <span class="icon">🏆</span>
+                <p class="value">@Model.Enrollments.Count(e => e.HasGrade)</p>
+                <p class="label">Grades Received</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>📖 My Courses</h3>
+        <a href="@Url.Action("Index", "StudentEnrollment")" class="btn btn-primary action-btn">
+            ➕ Enroll in Open Courses
+        </a>
+    </div>
+
+    @if (!Model.Enrollments.Any())
+    {
+        <div class="empty-state">
+            <div class="icon">📭</div>
+            <h4>No courses enrolled yet</h4>
+            <p class="text-muted">Start by enrolling in some open courses</p>
+            <a href="@Url.Action("Index", "StudentEnrollment")" class="btn btn-primary action-btn mt-2">
+                Browse Courses
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="course-table-container">
+            <table class="table course-table">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Term</th>
+                        <th>Total Score</th>
+                        <th>Letter Grade</th>
+                        <th>Attendance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model.Enrollments)
+                    {
+                        <tr>
+                            <td><strong>@e.CourseTitle</strong></td>
+                            <td>@e.Semester @e.AcademicYear</td>
+                            <td>
+                                @if (e.TotalScore.HasValue)
+                                {
+                                    <span class="badge bg-info">@e.TotalScore.Value.ToString("0.00")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(e.LetterGrade))
+                                {
+                                    string gradeClass = e.LetterGrade.StartsWith("A") ? "bg-success" :
+                                                       e.LetterGrade.StartsWith("B") ? "bg-primary" :
+                                                       e.LetterGrade.StartsWith("C") ? "bg-warning" :
+                                                       e.LetterGrade.StartsWith("D") ? "bg-secondary" : "bg-danger";
+                                    <span class="badge @gradeClass">@e.LetterGrade</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                @if (e.TotalAttendanceRecords == 0)
+                                {
+                                    <span class="text-muted">No records</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-present">@e.PresentCount Present</span>
+                                    <span class="badge badge-absent">@e.AbsentCount Absent</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-controller="Lessons" asp-action="Index" asp-route-courseId="@e.CourseId" class="btn btn-sm btn-outline-info action-btn mb-1">📹 Lessons</a>
+                                <a asp-controller="Quizzes" asp-action="Index" asp-route-courseId="@e.CourseId" class="btn btn-sm btn-outline-warning action-btn mb-1">📝 Quizzes</a>
+                                @if (e.HasGrade)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-secondary action-btn mb-1" disabled title="Can't withdraw after a grade has been recorded">
+                                        Withdraw
+                                    </button>
+                                }
+                                else if (e.HasTakenAnyQuiz)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-secondary action-btn mb-1" disabled title="Can't withdraw after taking a quiz">
+                                        Withdraw
+                                    </button>
+                                }
+                                else
+                                {
+                                    <form asp-controller="StudentEnrollment" asp-action="Withdraw" method="post" class="d-inline"
+                                          onsubmit="return confirm('Withdraw from @e.CourseTitle (@e.Semester @e.AcademicYear)? This cannot be undone.');">
+                                        <input type="hidden" name="enrollmentId" value="@e.EnrollmentId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger action-btn mb-1">Withdraw</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

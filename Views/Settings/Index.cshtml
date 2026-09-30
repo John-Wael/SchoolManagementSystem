@@ -1,0 +1,47 @@
+@model SchoolManagementSystem.Models.SystemSetting
+
+@{
+    ViewData["Title"] = "System Settings";
+}
+
+<h1>System Settings</h1>
+<hr />
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form action="/Settings/Index" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CurrentSemester" class="control-label">Current Semester</label>
+                <select asp-for="CurrentSemester" class="form-select">
+                    <option value="">-- Select semester --</option>
+                    <option value="Fall">Fall</option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                </select>
+                <span asp-validation-for="CurrentSemester" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CurrentAcademicYear" class="control-label">Current Academic Year</label>
+                <input asp-for="CurrentAcademicYear" class="form-control" placeholder="e.g. 2026-2027" maxlength="9" pattern="\d{4}-\d{4}" title="Format: YYYY-YYYY" />
+                <span asp-validation-for="CurrentAcademicYear" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

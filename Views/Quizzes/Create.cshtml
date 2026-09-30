@@ -1,0 +1,139 @@
+@{
+    ViewData["Title"] = "Create Quiz";
+    int courseId = ViewBag.CourseId;
+}
+
+<h2>Create New Quiz</h2>
+<hr />
+
+<form asp-action="Create" method="post" id="quizForm">
+    <input type="hidden" name="courseId" value="@courseId" />
+    <input type="hidden" name="questionsJson" id="questionsJson" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label>Title</label>
+                <input name="title" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label>Start Date</label>
+                <input name="startDate" type="datetime-local" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label>End Date</label>
+                <input name="endDate" type="datetime-local" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label>Duration (minutes)</label>
+                <input name="durationMinutes" type="number" class="form-control" value="30" required />
+            </div>
+        </div>
+    </div>
+
+    <h4>Questions</h4>
+    <div id="questionsContainer"></div>
+    <button type="button" class="btn btn-secondary mb-3" onclick="addQuestion()">+ Add Question</button>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Save Quiz</button>
+    <a asp-action="Index" asp-route-courseId="@courseId" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <script>
+        let questionCount = 0;
+
+        function addQuestion() {
+            questionCount++;
+            const id = questionCount;
+            const html = `
+                <div class="card mb-3" id="question_${id}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6>Question ${id}</h6>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion(${id})">Remove</button>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Question Text</label>
+                            <input class="form-control" id="text_${id}" required />
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Number of Options</label>
+                            <input type="number" class="form-control" id="optCount_${id}" value="4" min="2" max="10" onchange="renderOptions(${id})" />
+                        </div>
+                        <div id="optionsContainer_${id}"></div>
+                        <div class="form-group mb-2">
+                            <label>Correct Answer (Option Number)</label>
+                            <select class="form-control" id="correct_${id}"></select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Marks</label>
+                            <input type="number" class="form-control" id="marks_${id}" value="1" min="1" />
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById("questionsContainer").insertAdjacentHTML("beforeend", html);
+            renderOptions(id);
+        }
+
+        function removeQuestion(id) {
+            document.getElementById("question_" + id).remove();
+        }
+
+        function renderOptions(id) {
+            const count = parseInt(document.getElementById("optCount_" + id).value) || 2;
+            const container = document.getElementById("optionsContainer_" + id);
+            const correctSelect = document.getElementById("correct_" + id);
+
+            let html = "";
+            let options = "";
+            for (let i = 0; i < count; i++) {
+                html += `<div class="form-group mb-2"><label>Option ${i + 1}</label><input class="form-control" id="opt_${id}_${i}" required /></div>`;
+                options += `<option value="${i}">Option ${i + 1}</option>`;
+            }
+            container.innerHTML = html;
+            correctSelect.innerHTML = options;
+        }
+
+        document.getElementById("quizForm").addEventListener("submit", function (e) {
+            const questions = [];
+            for (let i = 1; i <= questionCount; i++) {
+                const el = document.getElementById("question_" + i);
+                if (!el) continue;
+
+                const text = document.getElementById("text_" + i).value.trim();
+                if (!text) {
+                    alert("Question " + i + " text is empty.");
+                    e.preventDefault();
+                    return;
+                }
+
+                const count = parseInt(document.getElementById("optCount_" + i).value) || 2;
+                const optionsArr = [];
+                for (let j = 0; j < count; j++) {
+                    const optVal = document.getElementById("opt_" + i + "_" + j).value.trim();
+                    if (!optVal) {
+                        alert("Option " + (j + 1) + " in Question " + i + " is empty.");
+                        e.preventDefault();
+                        return;
+                    }
+                    optionsArr.push(optVal);
+                }
+
+                questions.push({
+                    QuestionText: text,
+                    OptionsJson: JSON.stringify(optionsArr),
+                    CorrectAnswer: document.getElementById("correct_" + i).value,
+                    Marks: parseInt(document.getElementById("marks_" + i).value) || 1
+                });
+            }
+            document.getElementById("questionsJson").value = JSON.stringify(questions);
+        });
+    </script>
+}

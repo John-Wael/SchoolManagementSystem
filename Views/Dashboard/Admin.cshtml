@@ -1,0 +1,68 @@
+@model SchoolManagementSystem.Models.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="admin-header">
+    <h2>🏛️ Admin Dashboard</h2>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card card-depts">
+            <span class="icon">🏢</span>
+            <p class="value">@Model.DepartmentCount</p>
+            <p class="label">Departments</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card card-students">
+            <span class="icon">👨‍🎓</span>
+            <p class="value">@Model.StudentCount</p>
+            <p class="label">Students</p>
+            <p class="sub-label">@Model.ActiveStudentCount active</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card card-teachers">
+            <span class="icon">👨‍🏫</span>
+            <p class="value">@Model.TeacherCount</p>
+            <p class="label">Teachers</p>
+            <p class="sub-label">@Model.ActiveTeacherCount active</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card card-courses">
+            <span class="icon">📚</span>
+            <p class="value">@Model.CourseCount</p>
+            <p class="label">Courses</p>
+            <p class="sub-label">@Model.ActiveCourseCount active</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card card-enrollments">
+            <span class="icon">📝</span>
+            <p class="value">@Model.EnrollmentCount</p>
+            <p class="label">Enrollments</p>
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">🔗 Quick Links</h4>
+<div class="quick-links">
+    <a asp-controller="Departments" asp-action="Index" class="btn btn-outline-primary">🏢 Departments</a>
+    <a asp-controller="Students" asp-action="Index" class="btn btn-outline-success">👨‍🎓 Students</a>
+    <a asp-controller="Teachers" asp-action="Index" class="btn btn-outline-info">👨‍🏫 Teachers</a>
+    <a asp-controller="Courses" asp-action="Index" class="btn btn-outline-warning">📚 Courses</a>
+    <a asp-controller="CourseTeachers" asp-action="Index" class="btn btn-outline-secondary">🔗 Course Teachers</a>
+    <a asp-controller="Enrollments" asp-action="Index" class="btn btn-outline-primary">📝 Enrollments</a>
+    <a asp-controller="Grades" asp-action="Index" class="btn btn-outline-success">📊 Grades</a>
+    <a asp-controller="Attendance" asp-action="Index" class="btn btn-outline-info">📅 Attendance</a>
+    <a asp-controller="Lessons" asp-action="Index" class="btn btn-outline-warning">📹 Lessons</a>
+    <a asp-controller="Quizzes" asp-action="Index" class="btn btn-outline-danger">📝 Quizzes</a>
+    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">➕ Create Account</a>
+</div>

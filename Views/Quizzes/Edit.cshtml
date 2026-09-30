@@ -1,0 +1,174 @@
+@model SchoolManagementSystem.Models.Quiz
+
+@{
+    ViewData["Title"] = "Edit Quiz";
+    int courseId = Model.CourseId;
+}
+
+<h2>Edit Quiz</h2>
+<hr />
+
+<form asp-action="Edit" method="post" id="quizForm">
+    <input type="hidden" name="quizId" value="@Model.QuizId" />
+    <input type="hidden" name="questionsJson" id="questionsJson" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label>Title</label>
+                <input name="title" class="form-control" value="@Model.Title" required />
+            </div>
+            <div class="form-group mb-3">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="2">@Model.Description</textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label>Start Date</label>
+                <input name="startDate" type="datetime-local" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")" required />
+            </div>
+            <div class="form-group mb-3">
+                <label>End Date</label>
+                <input name="endDate" type="datetime-local" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-ddTHH:mm")" required />
+            </div>
+            <div class="form-group mb-3">
+                <label>Duration (minutes)</label>
+                <input name="durationMinutes" type="number" class="form-control" value="@Model.DurationMinutes" required />
+            </div>
+        </div>
+    </div>
+
+    <h4>Questions</h4>
+    <div id="questionsContainer"></div>
+    <button type="button" class="btn btn-secondary mb-3" onclick="addQuestion()">+ Add Question</button>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" asp-route-courseId="@courseId" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <script>
+        let questionCount = 0;
+
+        function addQuestion(data) {
+            questionCount++;
+            const id = questionCount;
+            const text = data?.QuestionText || "";
+            const marks = data?.Marks || 1;
+
+            let optionsArr = [];
+            if (data?.OptionsJson) {
+                try { optionsArr = JSON.parse(data.OptionsJson); } catch {}
+            }
+            const optCount = optionsArr.length || 4;
+
+            let optionsHtml = "";
+            for (let i = 0; i < optCount; i++) {
+                optionsHtml += `<div class="form-group mb-2"><label>Option ${i + 1}</label><input class="form-control" id="opt_${id}_${i}" value="${optionsArr[i] || ''}" required /></div>`;
+            }
+            let correctOptions = "";
+            for (let i = 0; i < optCount; i++) {
+                correctOptions += `<option value="${i}" ${data?.CorrectAnswer == i ? 'selected' : ''}>Option ${i + 1}</option>`;
+            }
+
+            const html = `
+                <div class="card mb-3" id="question_${id}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <h6>Question ${id}</h6>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion(${id})">Remove</button>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Question Text</label>
+                            <input class="form-control" id="text_${id}" value="${text}" required />
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Number of Options</label>
+                            <input type="number" class="form-control" id="optCount_${id}" value="${optCount}" min="2" max="10" onchange="renderOptions(${id})" />
+                        </div>
+                        <div id="optionsContainer_${id}">${optionsHtml}</div>
+                        <div class="form-group mb-2">
+                            <label>Correct Answer (Option Number)</label>
+                            <select class="form-control" id="correct_${id}">${correctOptions}</select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Marks</label>
+                            <input type="number" class="form-control" id="marks_${id}" value="${marks}" min="1" />
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById("questionsContainer").insertAdjacentHTML("beforeend", html);
+        }
+
+        function removeQuestion(id) {
+            document.getElementById("question_" + id).remove();
+        }
+
+        function renderOptions(id) {
+            const count = parseInt(document.getElementById("optCount_" + id).value) || 2;
+            const container = document.getElementById("optionsContainer_" + id);
+            const correctSelect = document.getElementById("correct_" + id);
+
+            let html = "";
+            let options = "";
+            for (let i = 0; i < count; i++) {
+                html += `<div class="form-group mb-2"><label>Option ${i + 1}</label><input class="form-control" id="opt_${id}_${i}" required /></div>`;
+                options += `<option value="${i}">Option ${i + 1}</option>`;
+            }
+            container.innerHTML = html;
+            correctSelect.innerHTML = options;
+        }
+
+        document.getElementById("quizForm").addEventListener("submit", function (e) {
+            const questions = [];
+            for (let i = 1; i <= questionCount; i++) {
+                const el = document.getElementById("question_" + i);
+                if (!el) continue;
+
+                const text = document.getElementById("text_" + i).value.trim();
+                if (!text) {
+                    alert("Question " + i + " text is empty.");
+                    e.preventDefault();
+                    return;
+                }
+
+                const count = parseInt(document.getElementById("optCount_" + i).value) || 2;
+                const optionsArr = [];
+                for (let j = 0; j < count; j++) {
+                    const optVal = document.getElementById("opt_" + i + "_" + j).value.trim();
+                    if (!optVal) {
+                        alert("Option " + (j + 1) + " in Question " + i + " is empty.");
+                        e.preventDefault();
+                        return;
+                    }
+                    optionsArr.push(optVal);
+                }
+
+                questions.push({
+                    QuestionText: text,
+                    OptionsJson: JSON.stringify(optionsArr),
+                    CorrectAnswer: document.getElementById("correct_" + i).value,
+                    Marks: parseInt(document.getElementById("marks_" + i).value) || 1
+                });
+            }
+            document.getElementById("questionsJson").value = JSON.stringify(questions);
+        });
+
+        // تحميل الأسئلة الموجودة
+        @if (Model.Questions != null && Model.Questions.Any())
+        {
+            foreach (var q in Model.Questions)
+            {
+                <text>
+                    addQuestion({
+                        QuestionText: @Html.Raw(Json.Serialize(q.QuestionText)),
+                        OptionsJson: @Html.Raw(Json.Serialize(q.OptionsJson)),
+                        CorrectAnswer: @Html.Raw(Json.Serialize(q.CorrectAnswer)),
+                        Marks: @q.Marks
+                    });
+                </text>
+            }
+        }
+    </script>
+}

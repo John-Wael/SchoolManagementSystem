@@ -1,0 +1,124 @@
+@model IEnumerable<SchoolManagementSystem.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header h2 { margin: 0; font-size: 28px; }
+
+    .create-btn {
+        background: white;
+        color: #4facfe;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        color: #00f2fe;
+    }
+
+    .data-table-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .data-table { margin: 0; }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+    }
+
+    .data-table thead th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .data-table tbody tr { transition: background 0.2s ease; }
+    .data-table tbody tr:hover { background: #f0f9ff; }
+    .data-table tbody td { padding: 15px; vertical-align: middle; border-color: #f0f0f0; }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #f0f9ff, #e0f2ff);
+        border-radius: 15px;
+        border: 2px dashed #a8d5ff;
+    }
+
+    .empty-state .icon { font-size: 80px; margin-bottom: 20px; }
+</style>
+
+<div class="page-header">
+    <h2>📅 Attendance</h2>
+    <a asp-action="Create" class="create-btn">➕ Create New</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="icon">📅</div>
+        <h4>No attendance records yet</h4>
+        <p class="text-muted">Click "Create New" to add attendance</p>
+    </div>
+}
+else
+{
+    <div class="data-table-container">
+        <table class="table data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Attendance Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.Enrollment?.Student?.FirstName @a.Enrollment?.Student?.LastName</td>
+                        <td>@a.Enrollment?.Course?.Title</td>
+                        <td>@a.AttendanceDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (a.Status == "Present")
+                            {
+                                <span class="badge bg-success">Present</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Absent</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,59 @@
+@model SchoolManagementSystem.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Enrollment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" asp-route-enrollmentid="@Model.EnrollmentId">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="EnrollmentId" />
+            <input type="hidden" asp-for="EnrolledOn" />
+
+            <div class="form-group mb-3">
+                <label asp-for="StudentId" class="control-label"></label>
+                <select asp-for="StudentId" class="form-select" asp-items="ViewBag.StudentId"></select>
+                <span asp-validation-for="StudentId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CourseId" class="control-label"></label>
+                <select asp-for="CourseId" class="form-select" asp-items="ViewBag.CourseId"></select>
+                <span asp-validation-for="CourseId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Semester" class="control-label"></label>
+                <select asp-for="Semester" class="form-select">
+                    <option value="">-- Select Semester --</option>
+                    <option value="Fall">Fall</option>
+                    <option value="Spring">Spring</option>
+                    <option value="Summer">Summer</option>
+                </select>
+                <span asp-validation-for="Semester" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AcademicYear" class="control-label"></label>
+                <input asp-for="AcademicYear" class="form-control" placeholder="e.g. 2025-2026" maxlength="9" pattern="\d{4}-\d{4}" title="Format: YYYY-YYYY" />
+                <span asp-validation-for="AcademicYear" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

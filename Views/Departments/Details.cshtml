@@ -1,0 +1,23 @@
+@model SchoolManagementSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Department</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Name)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Code)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Code)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-departmentid="@Model?.DepartmentId" class="btn btn-outline-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

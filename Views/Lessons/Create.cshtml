@@ -1,0 +1,112 @@
+@{
+    ViewData["Title"] = "Upload Lesson";
+    int courseId = ViewBag.CourseId;
+}
+
+<h2>Upload New Lesson</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data" onsubmit="return validateForm()">
+
+            @if (ViewBag.Courses != null)
+            {
+                <div class="form-group mb-3">
+                    <label class="control-label">Select Course</label>
+                    <select name="courseId" class="form-control" asp-items="ViewBag.Courses" required>
+                        <option value="">-- Select a Course --</option>
+                    </select>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" name="courseId" value="@courseId" />
+            }
+
+            <div class="form-group mb-3">
+                <label class="control-label">Title</label>
+                <input name="title" class="form-control" required />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="control-label">Video Source</label>
+                <select name="videoType" id="videoType" class="form-control" onchange="toggleVideoSource()">
+                    <option value="Upload">Upload from Device</option>
+                    <option value="YouTube">YouTube Link</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3" id="uploadSection">
+                <label class="control-label">Video File</label>
+                <input type="file" name="videoFile" class="form-control" accept="video/*" />
+            </div>
+
+            <div class="form-group mb-3" id="youtubeSection" style="display:none;">
+                <label class="control-label">YouTube URL</label>
+                <input name="youtubeUrl" id="youtubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." oninput="validateYouTubeUrl()" />
+                <small id="youtubeError" class="text-danger" style="display:none;"></small>
+                <small id="youtubeSuccess" class="text-success" style="display:none;"></small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Upload</button>
+            <a asp-action="Index" asp-route-courseId="@courseId" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleVideoSource() {
+            var type = document.getElementById("videoType").value;
+            document.getElementById("uploadSection").style.display = type === "Upload" ? "block" : "none";
+            document.getElementById("youtubeSection").style.display = type === "YouTube" ? "block" : "none";
+        }
+
+        function isValidYouTubeUrl(url) {
+            var pattern = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|shorts\/)|youtu\.be\/)[a-zA-Z0-9_-]{11}([&?].*)?$/;
+            return pattern.test(url);
+        }
+
+        function validateYouTubeUrl() {
+            var url = document.getElementById("youtubeUrl").value.trim();
+            var errorEl = document.getElementById("youtubeError");
+            var successEl = document.getElementById("youtubeSuccess");
+
+            if (url === "") {
+                errorEl.style.display = "none";
+                successEl.style.display = "none";
+                return false;
+            }
+
+            if (isValidYouTubeUrl(url)) {
+                errorEl.style.display = "none";
+                successEl.textContent = "✓ Valid YouTube URL";
+                successEl.style.display = "block";
+                return true;
+            } else {
+                errorEl.textContent = "✗ Invalid YouTube URL. Please enter a valid link like: https://www.youtube.com/watch?v=... or https://youtu.be/...";
+                errorEl.style.display = "block";
+                successEl.style.display = "none";
+                return false;
+            }
+        }
+
+        function validateForm() {
+            var type = document.getElementById("videoType").value;
+            if (type === "YouTube") {
+                var url = document.getElementById("youtubeUrl").value.trim();
+                if (!isValidYouTubeUrl(url)) {
+                    alert("Please enter a valid YouTube URL before submitting.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+}

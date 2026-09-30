@@ -1,0 +1,32 @@
+@model SchoolManagementSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3 class="text-danger">Are you sure you want to delete this?</h3>
+<div>
+    <h4>Grade</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Student</dt>
+        <dd class="col-sm-9">@Model?.Enrollment?.Student?.StudentNumber - @Model?.Enrollment?.Student?.LastName, @Model?.Enrollment?.Student?.FirstName</dd>
+
+        <dt class="col-sm-3">Course</dt>
+        <dd class="col-sm-9">@Model?.Enrollment?.Course?.Title (@Model?.Enrollment?.Semester @Model?.Enrollment?.AcademicYear)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TotalScore)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.TotalScore)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LetterGrade)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.LetterGrade)</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="GradeId" />
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

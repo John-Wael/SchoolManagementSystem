@@ -1,0 +1,52 @@
+@model SchoolManagementSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Edit Grade";
+}
+
+<h2>✏️ Edit Grade</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="GradeId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="EnrollmentId" class="control-label">Student & Course</label>
+                <select asp-for="EnrollmentId" class="form-control" asp-items="ViewBag.EnrollmentId"></select>
+                <span asp-validation-for="EnrollmentId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AssignmentScore" class="control-label">Assignment Score (Max 10)</label>
+                <input asp-for="AssignmentScore" class="form-control" min="0" max="10" step="0.01" />
+                <span asp-validation-for="AssignmentScore" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="MidtermScore" class="control-label">Midterm Score (Max 20)</label>
+                <input asp-for="MidtermScore" class="form-control" min="0" max="20" step="0.01" />
+                <span asp-validation-for="MidtermScore" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="FinalScore" class="control-label">Final Score (Max 60)</label>
+                <input asp-for="FinalScore" class="form-control" min="0" max="60" step="0.01" />
+                <span asp-validation-for="FinalScore" class="text-danger"></span>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>ℹ️ Note:</strong> Quiz score will be calculated automatically based on the student's highest quiz percentage (out of 10).
+            </div>
+
+            <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

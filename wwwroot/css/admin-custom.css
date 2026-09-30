@@ -1,0 +1,208 @@
+/* ============ ADMIN PAGES STYLES ============ */
+
+/* Page Header */
+.admin-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px 30px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.admin-header .create-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    display: inline-block;
+}
+
+.admin-header .create-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    color: #764ba2;
+}
+
+/* Stat Cards */
+.stat-card {
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.stat-card .icon {
+    font-size: 45px;
+    opacity: 0.7;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.stat-card .value {
+    font-size: 38px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.stat-card .label {
+    font-size: 13px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 5px 0 0 0;
+}
+
+.stat-card .sub-label {
+    font-size: 12px;
+    opacity: 0.8;
+    margin: 3px 0 0 0;
+}
+
+.card-depts { background: linear-gradient(135deg, #667eea, #764ba2); }
+.card-students { background: linear-gradient(135deg, #28a745, #20c997); }
+.card-teachers { background: linear-gradient(135deg, #17a2b8, #4facfe); }
+.card-courses { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+.card-enrollments { background: linear-gradient(135deg, #f093fb, #f5576c); }
+
+/* Data Table */
+.admin-table-container {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.admin-table {
+    margin: 0;
+    background: white;
+}
+
+.admin-table thead {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.admin-table thead th {
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.admin-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: #f8f9ff;
+}
+
+.admin-table tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-color: #f0f0f0;
+}
+
+/* Action Buttons */
+.action-btn-sm {
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border-width: 2px;
+    margin-right: 3px;
+    margin-bottom: 2px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Badges */
+.custom-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-dept { background: #e7f3ff; color: #0066cc; }
+.badge-course { background: #f0e7ff; color: #6600cc; }
+.badge-semester { background: #fff3e7; color: #cc6600; }
+.badge-open { background: #28a745; color: white; }
+.badge-closed { background: #dc3545; color: white; }
+.badge-primary-yes { background: #28a745; color: white; }
+.badge-primary-no { background: #6c757d; color: white; }
+
+/* Empty State */
+.admin-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f8f9ff, #e7ecff);
+    border-radius: 15px;
+    border: 2px dashed #b8c9e8;
+}
+
+.admin-empty .icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.admin-empty h4 {
+    color: #555;
+}
+
+/* Quick Links */
+.quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.quick-links .btn {
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border-width: 2px;
+}
+
+.quick-links .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}

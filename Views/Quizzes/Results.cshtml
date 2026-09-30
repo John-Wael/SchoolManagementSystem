@@ -1,0 +1,89 @@
+@model IEnumerable<SchoolManagementSystem.Models.StudentQuiz>
+
+@{
+    ViewData["Title"] = "Quiz Results";
+    int durationMinutes = ViewBag.DurationMinutes ?? 30;
+}
+
+<h2>Results: @ViewBag.QuizTitle</h2>
+<p><strong>Total Marks:</strong> @ViewBag.TotalMarks | <strong>Duration:</strong> @durationMinutes min</p>
+<hr />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No students have entered this quiz yet.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student Number</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Started At</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                bool submitted = r.SubmittedAt != default;
+                bool timeUp = false;
+                string status = "";
+                string statusClass = "";
+
+                if (submitted)
+                {
+                    status = "Submitted";
+                    statusClass = "bg-success";
+                }
+                else if (r.StartedAt.HasValue)
+                {
+                    var elapsed = DateTime.Now - r.StartedAt.Value;
+                    if (elapsed.TotalMinutes > durationMinutes)
+                    {
+                        status = "Time Up (Not Submitted)";
+                        statusClass = "bg-danger";
+                        timeUp = true;
+                    }
+                    else
+                    {
+                        status = "In Progress";
+                        statusClass = "bg-warning text-dark";
+                    }
+                }
+                else
+                {
+                    status = "Not Started";
+                    statusClass = "bg-secondary";
+                }
+
+                <tr>
+                    <td>@r.Student?.StudentNumber</td>
+                    <td>@r.Student?.FirstName @r.Student?.LastName</td>
+                    <td>@r.Student?.User?.Email</td>
+                    <td><span class="badge @statusClass">@status</span></td>
+                    <td>
+                        @if (submitted)
+                        {
+                            <strong>@r.Score / @r.TotalMarks</strong>
+                        }
+                        else if (timeUp)
+                        {
+                            <span class="text-danger">0 / @r.TotalMarks (Time Up)</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">--</span>
+                        }
+                    </td>
+                    <td>@(r.StartedAt?.ToString("yyyy-MM-dd HH:mm") ?? "--")</td>
+                    <td>@(submitted ? r.SubmittedAt.ToString("yyyy-MM-dd HH:mm") : "--")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

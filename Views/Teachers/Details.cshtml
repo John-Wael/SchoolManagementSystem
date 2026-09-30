@@ -1,0 +1,41 @@
+@model SchoolManagementSystem.Models.Teacher
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Teacher</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EmployeeNumber)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.EmployeeNumber)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FirstName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.FirstName)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LastName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.LastName)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.HireDate)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.HireDate)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.IsActive)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.IsActive)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CreatedAt)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.CreatedAt)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ModifiedAt)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ModifiedAt)</dd>
+
+        <dt class="col-sm-3">Department</dt>
+        <dd class="col-sm-9">@Model?.Department?.Name</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-teacherid="@Model?.TeacherId" class="btn btn-outline-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

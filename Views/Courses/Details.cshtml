@@ -1,0 +1,35 @@
+@model SchoolManagementSystem.Models.Course
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Course</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CourseCode)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.CourseCode)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Title)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Title)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Credits)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Credits)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.MaxStudents)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.MaxStudents)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.IsActive)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.IsActive)</dd>
+
+        <dt class="col-sm-3">Department</dt>
+        <dd class="col-sm-9">@Model?.Department?.Name</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-courseid="@Model?.CourseId" class="btn btn-outline-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

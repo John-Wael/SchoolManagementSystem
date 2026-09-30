@@ -1,0 +1,244 @@
+@model IEnumerable<SchoolManagementSystem.Models.Quiz>
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using SchoolManagementSystem.Data
+@using SchoolManagementSystem.Models
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext DbContext
+
+@{
+    ViewData["Title"] = "Quizzes";
+    bool canManage = ViewBag.CanManage ?? false;
+    int courseId = ViewBag.CourseId ?? 0;
+}
+
+<style>
+    .quizzes-header {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .quizzes-header h2 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .create-btn {
+        background: white;
+        color: #f5576c;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        color: #f093fb;
+    }
+
+    .quiz-table-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .quiz-table {
+        margin: 0;
+    }
+
+    .quiz-table thead {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+    }
+
+    .quiz-table thead th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .quiz-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .quiz-table tbody tr:hover {
+        background: #fff5f7;
+    }
+
+    .quiz-table tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        border-color: #f0f0f0;
+    }
+
+    .quiz-title {
+        font-weight: 700;
+        color: #333;
+    }
+
+    .badge-info {
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-duration { background: #e7f3ff; color: #0066cc; }
+    .badge-questions { background: #fff3e7; color: #cc6600; }
+    .badge-marks { background: #e7ffe7; color: #009933; }
+
+    .take-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        padding: 8px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .take-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
+
+    .submitted-badge {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .action-btn-sm {
+        border-radius: 20px;
+        padding: 5px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border-width: 2px;
+        margin-right: 3px;
+    }
+
+    .action-btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .empty-quizzes {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #fff5f7, #ffe7ef);
+        border-radius: 15px;
+        border: 2px dashed #e8b8c9;
+    }
+
+    .empty-quizzes .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="quizzes-header">
+    <h2>📝 Quizzes for @ViewBag.CourseTitle</h2>
+    @if (canManage && courseId > 0)
+    {
+        <a asp-action="Create" asp-route-courseId="@courseId" class="create-btn">
+            ➕ Create New Quiz
+        </a>
+    }
+</div>
+
+@if (TempData["Message"] != null) { <div class="alert alert-success">✅ @TempData["Message"]</div> }
+@if (TempData["Error"] != null) { <div class="alert alert-danger">⚠️ @TempData["Error"]</div> }
+
+@if (!Model.Any())
+{
+    <div class="empty-quizzes">
+        <div class="icon">📭</div>
+        <h4>No quizzes available</h4>
+        <p class="text-muted">Quizzes will appear here once they're created</p>
+    </div>
+}
+else
+{
+    <div class="quiz-table-container">
+        <table class="table quiz-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Course</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Duration</th>
+                    <th>Questions</th>
+                    <th>Total Marks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var userId = UserManager.GetUserId(User);
+                    var student = await DbContext.Students.FirstOrDefaultAsync(s => s.UserId == userId);
+                    var submittedQuizIds = student != null
+                        ? await DbContext.StudentQuizzes.Where(sq => sq.StudentId == student.StudentId && sq.SubmittedAt != default).Select(sq => sq.QuizId).ToListAsync()
+                        : new List<int>();
+                }
+
+                @foreach (var quiz in Model)
+                {
+                    <tr>
+                        <td><span class="quiz-title">@quiz.Title</span></td>
+                        <td>@quiz.Course?.CourseCode</td>
+                        <td>@quiz.StartDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@quiz.EndDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td><span class="badge-info badge-duration">⏱️ @quiz.DurationMinutes min</span></td>
+                        <td><span class="badge-info badge-questions">❓ @quiz.Questions.Count</span></td>
+                        <td><span class="badge-info badge-marks">🏆 @quiz.TotalMarks</span></td>
+                        <td>
+                            @if (User.IsInRole("Student"))
+                            {
+                                if (submittedQuizIds.Contains(quiz.QuizId))
+                                {
+                                    <span class="submitted-badge">✅ Submitted</span>
+                                }
+                                else
+                                {
+                                    <a asp-action="Take" asp-route-id="@quiz.QuizId" class="take-btn">▶️ Take</a>
+                                }
+                            }
+                            @if (canManage)
+                            {
+                                <a asp-action="Edit" asp-route-id="@quiz.QuizId" class="btn btn-sm btn-outline-warning action-btn-sm">✏️ Edit</a>
+                                <a asp-action="Results" asp-route-id="@quiz.QuizId" class="btn btn-sm btn-outline-info action-btn-sm">📊 Results</a>
+                                <form asp-action="Delete" asp-route-id="@quiz.QuizId" method="post" class="d-inline" onsubmit="return confirm('Delete this quiz?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger action-btn-sm">��️ Delete</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

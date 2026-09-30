@@ -1,0 +1,32 @@
+@model SchoolManagementSystem.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Enrollment</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Student</dt>
+        <dd class="col-sm-9">@Model?.Student?.StudentNumber - @Model?.Student?.LastName, @Model?.Student?.FirstName</dd>
+
+        <dt class="col-sm-3">Course</dt>
+        <dd class="col-sm-9">@Model?.Course?.Title</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Semester)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Semester)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AcademicYear)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.AcademicYear)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EnrolledOn)</dt>
+        <dd class="col-sm-9">@Model?.EnrolledOn.ToString("yyyy-MM-dd")</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-enrollmentid="@Model?.EnrollmentId" class="btn btn-outline-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

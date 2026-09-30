@@ -1,0 +1,47 @@
+@model IEnumerable<SchoolManagementSystem.Models.Department>
+
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<div class="admin-header">
+    <h2>🏢 Departments</h2>
+    <a asp-action="Create" class="create-btn">➕ Create New</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="admin-empty">
+        <div class="icon">🏢</div>
+        <h4>No departments yet</h4>
+        <p class="text-muted">Click "Create New" to add a department</p>
+    </div>
+}
+else
+{
+    <div class="admin-table-container">
+        <table class="table admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.Name</strong></td>
+                        <td><span class="custom-badge badge-dept">@item.Code</span></td>
+                        <td>
+                            <a asp-action="Edit" asp-route-departmentId="@item.DepartmentId" class="btn btn-sm btn-outline-warning action-btn-sm">✏️ Edit</a>
+                            <a asp-action="Details" asp-route-departmentId="@item.DepartmentId" class="btn btn-sm btn-outline-info action-btn-sm">🔍 Details</a>
+                            <a asp-action="Delete" asp-route-departmentId="@item.DepartmentId" class="btn btn-sm btn-outline-danger action-btn-sm">🗑️ Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

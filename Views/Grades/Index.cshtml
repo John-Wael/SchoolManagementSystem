@@ -1,0 +1,204 @@
+@model IEnumerable<SchoolManagementSystem.Models.Grade>
+
+@{
+    ViewData["Title"] = "Grades";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .page-header h2 { margin: 0; font-size: 28px; }
+
+    .create-btn {
+        background: white;
+        color: #667eea;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        color: #764ba2;
+    }
+
+    .criteria-info {
+        background: #f8f9ff;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .criteria-info strong { color: #667eea; }
+
+    .data-table-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .data-table { margin: 0; }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .data-table thead th {
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .data-table tbody tr { transition: background 0.2s ease; }
+    .data-table tbody tr:hover { background: #f8f9ff; }
+    .data-table tbody td { padding: 12px; vertical-align: middle; border-color: #f0f0f0; text-align: center; }
+
+    .score-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .score-assign { background: #e7f3ff; color: #0066cc; }
+    .score-mid { background: #fff3e7; color: #cc6600; }
+    .score-final { background: #f0e7ff; color: #6600cc; }
+    .score-quiz { background: #e7ffe7; color: #009933; }
+    .score-total { background: #333; color: white; font-size: 14px; }
+
+    .grade-A { background: #28a745; color: white; }
+    .grade-B { background: #17a2b8; color: white; }
+    .grade-C { background: #ffc107; color: #333; }
+    .grade-D { background: #fd7e14; color: white; }
+    .grade-F { background: #dc3545; color: white; }
+
+    .action-btn-sm {
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border-width: 2px;
+        margin: 2px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .action-btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #f8f9ff, #e7ecff);
+        border-radius: 15px;
+        border: 2px dashed #b8c9e8;
+    }
+
+    .empty-state .icon { font-size: 80px; margin-bottom: 20px; }
+</style>
+
+<div class="page-header">
+    <h2>📊 Grades</h2>
+    <a asp-action="Create" class="create-btn">➕ Create New</a>
+</div>
+
+<div class="criteria-info">
+    <strong>📋 Grading Criteria:</strong>
+    Final Exam: <strong>60</strong> | 
+    Midterm: <strong>20</strong> | 
+    Assignments: <strong>10</strong> | 
+    Quizzes: <strong>10</strong> (highest score) | 
+    <strong>Total: 100</strong>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="icon">📊</div>
+        <h4>No grades recorded yet</h4>
+        <p class="text-muted">Click "Create New" to add grades</p>
+    </div>
+}
+else
+{
+    <div class="data-table-container">
+        <table class="table data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Assignment<br/>(10)</th>
+                    <th>Midterm<br/>(20)</th>
+                    <th>Final<br/>(60)</th>
+                    <th>Quiz<br/>(10)</th>
+                    <th>Total<br/>(100)</th>
+                    <th>Grade</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var g in Model)
+                {
+                    <tr>
+                        <td style="text-align:left;">
+                            <strong>@g.Enrollment?.Student?.FirstName @g.Enrollment?.Student?.LastName</strong>
+                        </td>
+                        <td>@g.Enrollment?.Course?.Title</td>
+                        <td><span class="score-badge score-assign">@(g.AssignmentScore ?? 0)</span></td>
+                        <td><span class="score-badge score-mid">@(g.MidtermScore ?? 0)</span></td>
+                        <td><span class="score-badge score-final">@(g.FinalScore ?? 0)</span></td>
+                        <td><span class="score-badge score-quiz">@(g.QuizScore ?? 0)</span></td>
+                        <td><span class="score-badge score-total">@(g.TotalScore ?? 0)</span></td>
+                        <td>
+                            @{
+                                var gradeClass = g.LetterGrade?.StartsWith("A") == true ? "grade-A" :
+                                                 g.LetterGrade?.StartsWith("B") == true ? "grade-B" :
+                                                 g.LetterGrade?.StartsWith("C") == true ? "grade-C" :
+                                                 g.LetterGrade?.StartsWith("D") == true ? "grade-D" : "grade-F";
+                            }
+                            <span class="score-badge @gradeClass">@g.LetterGrade</span>
+                        </td>
+                        <td>
+                            @if (g.GradeId > 0)
+                            {
+                                <a asp-action="Edit" asp-route-gradeid="@g.GradeId" class="btn btn-sm btn-outline-warning action-btn-sm">✏️ Edit</a>
+                                <a asp-action="Details" asp-route-gradeid="@g.GradeId" class="btn btn-sm btn-outline-info action-btn-sm">🔍 Details</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Create" class="btn btn-sm btn-outline-success action-btn-sm">➕ Add Grade</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,61 @@
+﻿@model List<SchoolManagementSystem.Models.ViewModels.OpenCourseRow>
+
+@{
+    ViewData["Title"] = "Enroll in a Course";
+}
+
+<h1>Enroll in a Course</h1>
+<p class="text-muted">Current term: @ViewBag.CurrentSemester @ViewBag.CurrentAcademicYear</p>
+<hr />
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No courses are currently open for enrollment.</div>
+}
+else
+{
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Code</th>
+                <th>Title</th>
+                <th>Department</th>
+                <th>Credits</th>
+                <th>Seats</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                var isFull = c.MaxStudents.HasValue && c.CurrentEnrolledCount >= c.MaxStudents.Value;
+                <tr>
+                    <td>@c.CourseCode</td>
+                    <td>@c.Title</td>
+                    <td>@c.DepartmentName</td>
+                    <td>@c.Credits</td>
+                    <td>@c.CurrentEnrolledCount@(c.MaxStudents.HasValue ? $" / {c.MaxStudents}" : "")</td>
+                    <td class="text-end">
+                        <form asp-action="Enroll" method="post" class="d-inline">
+                            <input type="hidden" name="courseId" value="@c.CourseId" />
+                            <button type="submit" class="btn btn-sm btn-primary" @(isFull ? "disabled" : "")>
+                                @(isFull ? "Full" : "Enroll")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-controller="Dashboard" asp-action="Student" class="btn btn-outline-secondary mt-3">Back to Dashboard</a>

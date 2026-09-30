@@ -1,0 +1,38 @@
+@model SchoolManagementSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Grade</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Student</dt>
+        <dd class="col-sm-9">@Model?.Enrollment?.Student?.StudentNumber - @Model?.Enrollment?.Student?.LastName, @Model?.Enrollment?.Student?.FirstName</dd>
+
+        <dt class="col-sm-3">Course</dt>
+        <dd class="col-sm-9">@Model?.Enrollment?.Course?.Title (@Model?.Enrollment?.Semester @Model?.Enrollment?.AcademicYear)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AssignmentScore)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.AssignmentScore)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.MidtermScore)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.MidtermScore)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FinalScore)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.FinalScore)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TotalScore)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.TotalScore)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LetterGrade)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.LetterGrade)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-gradeid="@Model?.GradeId" class="btn btn-outline-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>
